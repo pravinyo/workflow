@@ -12,9 +12,6 @@ import io.iworkflow.core.communication.CommunicationMethodDef;
 import io.iworkflow.core.communication.SignalChannelDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
-import io.iworkflow.core.persistence.SearchAttributeDef;
-import io.iworkflow.gen.models.SearchAttributeValueType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,14 +19,13 @@ import java.util.List;
 @Component
 public class LamfOrchestrationWorkflow implements ObjectWorkflow {
     private final List<StateDef> stateDefs;
-    @Autowired Client client;
 
-    public LamfOrchestrationWorkflow() {
+    public LamfOrchestrationWorkflow(Client client) {
         this.stateDefs = List.of(
                 StateDef.startingState(new StartStep()),
                 StateDef.nonStartingState(new TermsAndConditionConsentStep()),
                 StateDef.nonStartingState(new MutualFundPullGenerateOtpStep(client)),
-                StateDef.nonStartingState(new MutualFundPullValidateOtpStep(client)),
+                StateDef.nonStartingState(new MutualFundPullValidateOtpStep(client,3)),
                 StateDef.nonStartingState(new MutualFundSchemesStep()),
                 StateDef.nonStartingState(new GenerateLoanDetailsStep()),
                 StateDef.nonStartingState(new ReviewAndConfirmStep())
@@ -44,7 +40,8 @@ public class LamfOrchestrationWorkflow implements ObjectWorkflow {
     @Override
     public List<PersistenceFieldDef> getPersistenceSchema() {
         return List.of(
-                DataAttributeDef.create(ApplicationDetails.class, Constants.DA_APPLICATION_DETAILS)
+                DataAttributeDef.create(ApplicationDetails.class, Constants.DA_APPLICATION_DETAILS),
+                DataAttributeDef.create(Integer.class, Constants.DA_VALIDATE_OTP_ATTEMPT)
 //                SearchAttributeDef.create(SearchAttributeValueType.TEXT),
         );
     }

@@ -13,20 +13,17 @@ import io.iworkflow.gen.models.RetryPolicy;
 import io.iworkflow.gen.models.WorkflowResetType;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Objects;
 
 @Slf4j
 public class MutualFundPullValidateOtpStep implements WorkflowState<Void> {
-
-    @Value("${mf-pull.generate-otp-attempt}")
-    private int maxOtpAttempt;
-
+    private final int maxOtpAttempt;
     private final Client client;
 
-    public MutualFundPullValidateOtpStep(Client client) {
+    public MutualFundPullValidateOtpStep(Client client, int maxOtpAttempt) {
         this.client = client;
+        this.maxOtpAttempt = maxOtpAttempt;
     }
 
     @Override
@@ -43,7 +40,7 @@ public class MutualFundPullValidateOtpStep implements WorkflowState<Void> {
 
     @Override
     public StateDecision execute(Context context, Void input, CommandResults commandResults, Persistence persistence, Communication communication) {
-        if (isRetryAttemptExhausted(context)) {
+        if (isRetryAttemptExhausted(persistence)) {
             var jumpToStep = "TermsAndConditionConsentStep";
             var reason = "RESETTING: OTP validate failed";
             resetToStep(context, jumpToStep, reason);
@@ -75,10 +72,15 @@ public class MutualFundPullValidateOtpStep implements WorkflowState<Void> {
         return Objects.equals(otp, "1234");
     }
 
-    private boolean isRetryAttemptExhausted(Context context) {
-        if (context.getAttempt().isPresent()) {
-            return context.getAttempt().get() == maxOtpAttempt;
+    private boolean isRetryAttemptExhausted(Persistence persistence) {
+        var attemptLeft = persistence.getDataAttribute(Constants.DA_VALIDATE_OTP_ATTEMPT, Integer.class);
+        if (Objects.isNull(attemptLeft)) {
+            attemptLeft = maxOtpAttempt;
         }
+        if (attemptLeft == 0) {
+            return true;
+        }
+        persistence.setDataAttribute(Constants.DA_VALIDATE_OTP_ATTEMPT, attemptLeft - 1);
         return false;
     }
 
