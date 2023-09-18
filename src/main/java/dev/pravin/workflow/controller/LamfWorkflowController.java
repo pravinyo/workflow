@@ -96,4 +96,11 @@ public class LamfWorkflowController {
         var response = client.describeWorkflow(workflowId);
         return ResponseEntity.ok(new Response( response, ""));
     }
+
+    @GetMapping("/search-attributes")
+    ResponseEntity<Response> getAllSearchAttributes(@RequestParam String customerId) {
+        var workflowId = getWorkflowId(customerId);
+        var response = client.getAllSearchAttributes(LamfOrchestrationWorkflow.class, workflowId);
+        return ResponseEntity.ok(new Response( response, ""));
+    }
 }
