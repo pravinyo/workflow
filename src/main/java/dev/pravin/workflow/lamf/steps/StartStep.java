@@ -22,7 +22,6 @@ public class StartStep implements WorkflowState<String> {
         // check whether there is any existing in progress application
         // navigate to that step
         // else start fresh
-        persistence.setSearchAttributeKeyword(Constants.SA_CUSTOMER_ID, customerId);
         return StateDecision.singleNextState(TermsAndConditionConsentStep.class);
     }
 }
