@@ -89,4 +89,11 @@ public class LamfWorkflowController {
         var response = client.getComplexWorkflowResultWithWait(workflowId);
         return ResponseEntity.ok(new Response( response, ""));
     }
+
+    @GetMapping("/status")
+    ResponseEntity<Response> status(@RequestParam String customerId) {
+        var workflowId = getWorkflowId(customerId);
+        var response = client.describeWorkflow(workflowId);
+        return ResponseEntity.ok(new Response( response, ""));
+    }
 }
