@@ -12,6 +12,8 @@ import io.iworkflow.core.communication.CommunicationMethodDef;
 import io.iworkflow.core.communication.SignalChannelDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
+import io.iworkflow.core.persistence.SearchAttributeDef;
+import io.iworkflow.gen.models.SearchAttributeValueType;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -41,8 +43,9 @@ public class LamfOrchestrationWorkflow implements ObjectWorkflow {
     public List<PersistenceFieldDef> getPersistenceSchema() {
         return List.of(
                 DataAttributeDef.create(ApplicationDetails.class, Constants.DA_APPLICATION_DETAILS),
-                DataAttributeDef.create(Integer.class, Constants.DA_VALIDATE_OTP_ATTEMPT)
-//                SearchAttributeDef.create(SearchAttributeValueType.TEXT),
+                DataAttributeDef.create(Integer.class, Constants.DA_VALIDATE_OTP_ATTEMPT),
+
+                SearchAttributeDef.create(SearchAttributeValueType.TEXT,Constants.SA_CUSTOMER_ID)
         );
     }
 

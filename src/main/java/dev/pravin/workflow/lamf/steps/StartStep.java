@@ -1,6 +1,7 @@
 package dev.pravin.workflow.lamf.steps;
 
 
+import dev.pravin.workflow.lamf.Constants;
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.WorkflowState;
@@ -21,6 +22,7 @@ public class StartStep implements WorkflowState<String> {
         // check whether there is any existing in progress application
         // navigate to that step
         // else start fresh
+        persistence.setSearchAttributeKeyword(Constants.SA_CUSTOMER_ID, customerId);
         return StateDecision.singleNextState(TermsAndConditionConsentStep.class);
     }
 }

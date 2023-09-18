@@ -7,8 +7,12 @@ import dev.pravin.workflow.lamf.request.SelectedMutualFundRequest;
 import dev.pravin.workflow.lamf.request.ValidateOtpRequest;
 import dev.pravin.workflow.lamf.response.Response;
 import io.iworkflow.core.Client;
+import io.iworkflow.core.ImmutableWorkflowOptions;
+import io.iworkflow.gen.models.WorkflowSearchResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 
 @RestController
@@ -23,28 +27,58 @@ public class LamfWorkflowController {
 
     @PostMapping("/start")
     ResponseEntity<Response> start(@RequestParam String customerId) {
-        client.startWorkflow(LamfOrchestrationWorkflow.class, customerId, 3600);
-        return ResponseEntity.ok(new Response("", "success", ""));
+        var workflowId = getWorkflowId(customerId);
+        var options = ImmutableWorkflowOptions.builder()
+                .initialSearchAttribute(Map.of(Constants.SA_CUSTOMER_ID, customerId))
+                .build();
+
+        client.startWorkflow(LamfOrchestrationWorkflow.class, workflowId, 3600, null, options);
+        return ResponseEntity.ok(new Response( "success", ""));
+    }
+
+    private String getWorkflowId(String customerId) {
+        return "WF-LAMF-"+customerId;
     }
 
     @PostMapping("/consent")
     ResponseEntity<Response> saveConsent(@RequestBody GetStartedRequest getStartedRequest) {
-        client.signalWorkflow(LamfOrchestrationWorkflow.class, getStartedRequest.customerId(),
+        var workflowId = getWorkflowId(getStartedRequest.customerId());
+        client.signalWorkflow(LamfOrchestrationWorkflow.class, workflowId,
                 Constants.SC_USER_INPUT_CONSENT,getStartedRequest);
-        return ResponseEntity.ok(new Response("", "success", ""));
+        return ResponseEntity.ok(new Response( "success", ""));
     }
 
     @PostMapping("/validate/otp")
     ResponseEntity<Response> validateOtp(@RequestBody ValidateOtpRequest validateOtpRequest) {
-        client.signalWorkflow(LamfOrchestrationWorkflow.class, validateOtpRequest.customerId(),
+        var workflowId = getWorkflowId(validateOtpRequest.customerId());
+        client.signalWorkflow(LamfOrchestrationWorkflow.class, workflowId,
                 Constants.SC_USER_INPUT_MF_PULL_OTP, validateOtpRequest);
-        return ResponseEntity.ok(new Response("", "success", ""));
+        return ResponseEntity.ok(new Response( "success", ""));
     }
 
     @PostMapping("/schemes")
     ResponseEntity<Response> schemes(@RequestBody SelectedMutualFundRequest selectedMutualFundRequest) {
-        client.signalWorkflow(LamfOrchestrationWorkflow.class, selectedMutualFundRequest.customerId(),
+        var workflowId = getWorkflowId(selectedMutualFundRequest.customerId());
+        client.signalWorkflow(LamfOrchestrationWorkflow.class, workflowId,
                 Constants.SC_USER_INPUT_MF_SCHEME_LIST,selectedMutualFundRequest.selectedMutualFund());
-        return ResponseEntity.ok(new Response("", "success", ""));
+        return ResponseEntity.ok(new Response( "success", ""));
+    }
+
+    @GetMapping("/search")
+    ResponseEntity<Response> getQuery(@RequestParam String query) {
+        query = escapeQuote(query);
+        System.out.println("got query for search: " + query);
+        WorkflowSearchResponse response = client.searchWorkflow(query, 1000);
+        return ResponseEntity.ok(new Response( response, ""));
+    }
+
+    String escapeQuote(String input) {
+        if (input.startsWith("'")) {
+            input = input.substring(1, input.length() - 1);
+        }
+        if (input.startsWith("\"")) {
+            input = input.substring(1, input.length() - 1);
+        }
+        return input;
     }
 }
