@@ -6,6 +6,7 @@ import dev.pravin.workflow.lamf.request.GetStartedRequest;
 import dev.pravin.workflow.lamf.request.SelectedMutualFundRequest;
 import dev.pravin.workflow.lamf.request.ValidateOtpRequest;
 import dev.pravin.workflow.lamf.response.Response;
+import dev.pravin.workflow.lamf.steps.MutualFundPullGenerateOtpStep;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ImmutableWorkflowOptions;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
@@ -80,5 +81,12 @@ public class LamfWorkflowController {
             input = input.substring(1, input.length() - 1);
         }
         return input;
+    }
+
+    @GetMapping("/complex/result")
+    ResponseEntity<Response> getResult(@RequestParam String customerId) {
+        var workflowId = getWorkflowId(customerId);
+        var response = client.getComplexWorkflowResultWithWait(workflowId);
+        return ResponseEntity.ok(new Response( response, ""));
     }
 }
