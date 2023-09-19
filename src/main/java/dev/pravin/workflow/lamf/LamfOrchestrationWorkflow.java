@@ -3,6 +3,7 @@ package dev.pravin.workflow.lamf;
 import dev.pravin.workflow.lamf.model.ApplicationDetails;
 import dev.pravin.workflow.lamf.request.GetStartedRequest;
 import dev.pravin.workflow.lamf.model.SelectedMutualFund;
+import dev.pravin.workflow.lamf.request.InitiateKycRequest;
 import dev.pravin.workflow.lamf.request.ValidateOtpRequest;
 import dev.pravin.workflow.lamf.steps.*;
 import io.iworkflow.core.Client;
@@ -30,7 +31,9 @@ public class LamfOrchestrationWorkflow implements ObjectWorkflow {
                 StateDef.nonStartingState(new MutualFundPullValidateOtpStep(client,3)),
                 StateDef.nonStartingState(new MutualFundSchemesStep()),
                 StateDef.nonStartingState(new GenerateLoanDetailsStep()),
-                StateDef.nonStartingState(new ReviewAndConfirmStep())
+                StateDef.nonStartingState(new ReviewAndConfirmStep()),
+                StateDef.nonStartingState(new InitiateKycStep(client)),
+                StateDef.nonStartingState(new AwaitingKycCompletionStep())
         );
     }
 
@@ -55,7 +58,9 @@ public class LamfOrchestrationWorkflow implements ObjectWorkflow {
         return List.of(
                 SignalChannelDef.create(GetStartedRequest.class, Constants.SC_USER_INPUT_CONSENT),
                 SignalChannelDef.create(ValidateOtpRequest.class, Constants.SC_USER_INPUT_MF_PULL_OTP),
-                SignalChannelDef.create(SelectedMutualFund.class, Constants.SC_USER_INPUT_MF_SCHEME_LIST)
+                SignalChannelDef.create(SelectedMutualFund.class, Constants.SC_USER_INPUT_MF_SCHEME_LIST),
+                SignalChannelDef.create(InitiateKycRequest.class, Constants.SC_USER_INPUT_KYC),
+                SignalChannelDef.create(String.class, Constants.SC_SYSTEM_KYC_COMPLETED)
         );
     }
 }

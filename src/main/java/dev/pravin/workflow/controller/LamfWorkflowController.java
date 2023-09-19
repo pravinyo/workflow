@@ -4,6 +4,7 @@ import dev.pravin.workflow.kyc.AadhaarKycWorkflow;
 import dev.pravin.workflow.lamf.Constants;
 import dev.pravin.workflow.lamf.LamfOrchestrationWorkflow;
 import dev.pravin.workflow.lamf.request.GetStartedRequest;
+import dev.pravin.workflow.lamf.request.InitiateKycRequest;
 import dev.pravin.workflow.lamf.request.SelectedMutualFundRequest;
 import dev.pravin.workflow.lamf.request.ValidateOtpRequest;
 import dev.pravin.workflow.lamf.response.Response;
@@ -111,6 +112,13 @@ public class LamfWorkflowController {
                 LamfOrchestrationWorkflow.class,
                 workflowId);
         return ResponseEntity.ok(new Response( response, ""));
+    }
+
+    @PostMapping("/v2/kyc/aadhaar")
+    ResponseEntity<Response> startAadhaarKycV2(@RequestBody InitiateKycRequest initiateKycRequest) {
+        var workflowId = getWorkflowId(initiateKycRequest.customerId());
+        client.signalWorkflow(LamfOrchestrationWorkflow.class, workflowId, Constants.SC_USER_INPUT_KYC, initiateKycRequest);
+        return ResponseEntity.ok(new Response("success", ""));
     }
 
     @PostMapping("/kyc/aadhaar")

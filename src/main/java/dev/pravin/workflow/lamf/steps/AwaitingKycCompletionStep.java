@@ -1,6 +1,5 @@
 package dev.pravin.workflow.lamf.steps;
 
-import dev.pravin.workflow.lamf.model.ApplicationDetails;
 import dev.pravin.workflow.lamf.Constants;
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
@@ -8,36 +7,38 @@ import io.iworkflow.core.WorkflowState;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
+import io.iworkflow.core.communication.SignalCommand;
 import io.iworkflow.core.persistence.Persistence;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ReviewAndConfirmStep implements WorkflowState<Void> {
+public class AwaitingKycCompletionStep implements WorkflowState<Void> {
+
     @Override
     public Class<Void> getInputType() {
-        return null;
+        return Void.class;
     }
 
     @Override
     public CommandRequest waitUntil(Context context, Void input, Persistence persistence, Communication communication) {
         persistence.setDataAttribute(Constants.DA_CURRENT_STEP, this.getClass().getSimpleName());
-        return CommandRequest.empty;
+        return CommandRequest.forAllCommandCompleted(
+                SignalCommand.create(Constants.SC_SYSTEM_KYC_COMPLETED)
+        );
     }
 
     @Override
     public StateDecision execute(Context context, Void input, CommandResults commandResults, Persistence persistence, Communication communication) {
-        updateLoanDetails(persistence);
-        performSoftSanction();
-        return StateDecision.singleNextState(InitiateKycStep.class);
-    }
+        var kycCompletionStatus = (String) commandResults.getSignalValueByIndex(0);
 
-    private void performSoftSanction() {
-        // make API call to external system to save the risk decision
-    }
-
-    private void updateLoanDetails(Persistence persistence) {
-        // update loan details in DB
-        var applicationDetails = persistence.getDataAttribute(Constants.DA_APPLICATION_DETAILS, ApplicationDetails.class);
-        log.info("Loan details is : {}", applicationDetails.getLoanDetails());
+        if (kycCompletionStatus.equals("Success")) {
+            log.info("Kyc completed");
+            persistence.setDataAttribute(Constants.DA_CURRENT_STEP, "Done");
+            return StateDecision.forceCompleteWorkflow("Done");
+        } else {
+            persistence.setDataAttribute(Constants.DA_CURRENT_STEP, "Failed");
+            log.info("Kyc failed");
+        }
+        return StateDecision.singleNextState(AwaitingKycCompletionStep.class);
     }
 }
