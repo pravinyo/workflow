@@ -6,7 +6,6 @@ import dev.pravin.workflow.lamf.request.GetStartedRequest;
 import dev.pravin.workflow.lamf.request.SelectedMutualFundRequest;
 import dev.pravin.workflow.lamf.request.ValidateOtpRequest;
 import dev.pravin.workflow.lamf.response.Response;
-import dev.pravin.workflow.lamf.steps.MutualFundPullGenerateOtpStep;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ImmutableWorkflowOptions;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
@@ -101,6 +100,14 @@ public class LamfWorkflowController {
     ResponseEntity<Response> getAllSearchAttributes(@RequestParam String customerId) {
         var workflowId = getWorkflowId(customerId);
         var response = client.getAllSearchAttributes(LamfOrchestrationWorkflow.class, workflowId);
+        return ResponseEntity.ok(new Response( response, ""));
+    }
+
+    @GetMapping("/data-attributes")
+    ResponseEntity<Response> getDataAttributesByWorkflow(@RequestParam String workflowId) {
+        var response = client.getAllDataAttributes(
+                LamfOrchestrationWorkflow.class,
+                workflowId);
         return ResponseEntity.ok(new Response( response, ""));
     }
 }

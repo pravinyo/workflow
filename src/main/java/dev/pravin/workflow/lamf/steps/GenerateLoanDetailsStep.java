@@ -7,6 +7,7 @@ import dev.pravin.workflow.lamf.model.SelectedMutualFund;
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.WorkflowState;
+import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
@@ -17,6 +18,12 @@ public class GenerateLoanDetailsStep implements WorkflowState<Void> {
     @Override
     public Class<Void> getInputType() {
         return Void.class;
+    }
+
+    @Override
+    public CommandRequest waitUntil(Context context, Void input, Persistence persistence, Communication communication) {
+        persistence.setDataAttribute(Constants.DA_CURRENT_STEP, this.getClass().getSimpleName());
+        return CommandRequest.empty;
     }
 
     @Override

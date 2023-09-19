@@ -24,6 +24,7 @@ public class MutualFundSchemesStep implements WorkflowState<Void> {
 
     @Override
     public CommandRequest waitUntil(Context context, Void input, Persistence persistence, Communication communication) {
+        persistence.setDataAttribute(Constants.DA_CURRENT_STEP, this.getClass().getSimpleName());
         return CommandRequest.forAnyCommandCompleted(
                 SignalCommand.create(Constants.SC_USER_INPUT_MF_SCHEME_LIST)
         );

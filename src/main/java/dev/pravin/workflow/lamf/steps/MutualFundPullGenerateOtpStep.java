@@ -1,9 +1,9 @@
 package dev.pravin.workflow.lamf.steps;
 
-import com.sun.jdi.InternalException;
 import dev.pravin.workflow.lamf.model.ApplicationDetails;
 import dev.pravin.workflow.lamf.Constants;
 import io.iworkflow.core.*;
+import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
@@ -27,6 +27,12 @@ public class MutualFundPullGenerateOtpStep implements WorkflowState<String> {
     @Override
     public Class<String> getInputType() {
         return String.class;
+    }
+
+    @Override
+    public CommandRequest waitUntil(Context context, String input, Persistence persistence, Communication communication) {
+        persistence.setDataAttribute(Constants.DA_CURRENT_STEP, this.getClass().getSimpleName());
+        return CommandRequest.empty;
     }
 
     @Override

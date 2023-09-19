@@ -4,6 +4,7 @@ public class Constants {
     // data attributes
     public static final String DA_APPLICATION_DETAILS = "da_application_details";
     public static final String DA_VALIDATE_OTP_ATTEMPT = "da_validate_otp_attempt";
+    public static final String DA_CURRENT_STEP = "da_current_step";
 
     // signal channel
     public static final String SC_USER_INPUT_CONSENT = "sc_user_input_consent";

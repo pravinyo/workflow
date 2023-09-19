@@ -44,6 +44,7 @@ public class LamfOrchestrationWorkflow implements ObjectWorkflow {
         return List.of(
                 DataAttributeDef.create(ApplicationDetails.class, Constants.DA_APPLICATION_DETAILS),
                 DataAttributeDef.create(Integer.class, Constants.DA_VALIDATE_OTP_ATTEMPT),
+                DataAttributeDef.create(String.class, Constants.DA_CURRENT_STEP),
 
                 SearchAttributeDef.create(SearchAttributeValueType.TEXT,Constants.SA_CUSTOMER_ID)
         );
