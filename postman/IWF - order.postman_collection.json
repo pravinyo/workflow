@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "5dff5179-055c-4698-9551-9f5bf328df5e",
+		"name": "IWF - order",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": 2,\n    \"totalAmount\": 43500,\n    \"withExchange\": true,\n    \"items\": [\n        {\n            \"name\": \"Dell Inspiron 14\",\n            \"price\": \"50000\",\n            \"id\": \"LAPTOP-DELL-INSPIRON-1400\"\n        },\n        {\n            \"name\": \"5% off credit card discount\",\n            \"price\": \"1500\",\n            \"id\": \"DISCOUNT-OFFER-Q2Y2023\"\n        },\n        {\n            \"name\": \"Exchange discount\",\n            \"price\": \"5000\",\n            \"id\": \"EXCHANGE-OFFER-Q2Y2023\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8803/order/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"order",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/order/details?workflowId=2-1694187217",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"order",
+						"details"
+					],
+					"query": [
+						{
+							"key": "workflowId",
+							"value": "2-1694187217"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment status",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"workflowId\": \"2-1694187217\",\n    \"transactionId\": \"123\",\n    \"isSuccessful\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8803/order/payment-status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"order",
+						"payment-status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "notify stale order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/order/scheduler/notify-stale-order-job",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"order",
+						"scheduler",
+						"notify-stale-order-job"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "stop",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/order/workflow/stop?workflowId=WF-LAMF-DEV-001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"order",
+						"workflow",
+						"stop"
+					],
+					"query": [
+						{
+							"key": "workflowId",
+							"value": "WF-LAMF-DEV-001"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reset state",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/order/state/reset?eventId=4&workflowId=2-1694358878",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"order",
+						"state",
+						"reset"
+					],
+					"query": [
+						{
+							"key": "eventId",
+							"value": "4"
+						},
+						{
+							"key": "workflowId",
+							"value": "2-1694358878"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "change order",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": 2,\n    \"totalAmount\": 43500,\n    \"withExchange\": false,\n    \"items\": [\n        {\n            \"name\": \"Dell Inspiron 14\",\n            \"price\": \"50000\",\n            \"id\": \"LAPTOP-DELL-INSPIRON-1400\"\n        },\n        {\n            \"name\": \"5% off credit card discount\",\n            \"price\": \"1500\",\n            \"id\": \"DISCOUNT-OFFER-Q2Y2023\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8803/order/change?workflowId=2-1694360771",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"order",
+						"change"
+					],
+					"query": [
+						{
+							"key": "workflowId",
+							"value": "2-1694360771"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

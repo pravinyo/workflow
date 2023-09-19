@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "291bda41-9a7e-468b-8321-08067333c61a",
+		"name": "KYC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "start kyc",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/kyc/aadhaar?customerId=DEV-002&aadhaarId=123412341234",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"kyc",
+						"aadhaar"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "DEV-002"
+						},
+						{
+							"key": "aadhaarId",
+							"value": "123412341234"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "aadhaar otp",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/kyc/aadhaar/otp?customerId=\"DEV-001\"&otp=1234",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"kyc",
+						"aadhaar",
+						"otp"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "\"DEV-001\""
+						},
+						{
+							"key": "otp",
+							"value": "1234"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

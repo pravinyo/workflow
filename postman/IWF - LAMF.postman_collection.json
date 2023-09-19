@@ -1,0 +1,749 @@
+{
+	"info": {
+		"_postman_id": "13639826-868d-49fc-9f51-5222a316e6a0",
+		"name": "IWF - LAMF",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "start",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/start?customerId=DEV-004",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"start"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "DEV-004"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "consent",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": \"DEV-004\",\n    \"isConsentProvided\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/consent",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"consent"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MF pull validate OTP",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": \"DEV-004\",\n    \"otp\": \"1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/validate/otp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"validate",
+						"otp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mf schemes for pledging",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": \"DEV-004\",\n    \"selectedMutualFund\": {\n        \"totalValue\": \"4850.0\",\n        \"mutualFunds\": [\n            {\n                \"name\": \"AXIS-Technology Growth Fund - Direct\",\n                \"quantity\": \"100\",\n                \"unitPrice\": \"48.5\"\n            }\n        ]\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/schemes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"schemes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "initiate kyc",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": \"DEV-004\",\n    \"aadhaarId\": \"123412341234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/v2/kyc/aadhaar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"v2",
+						"kyc",
+						"aadhaar"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "DEV-002",
+							"disabled": true
+						},
+						{
+							"key": "aadhaarId",
+							"value": "123412341234",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "aadhaar otp",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/kyc/aadhaar/otp?customerId=DEV-004&otp=1234",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"kyc",
+						"aadhaar",
+						"otp"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "DEV-004"
+						},
+						{
+							"key": "otp",
+							"value": "1234"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/search?query='customer_id=\"DEV-001\" AND ExecutionStatus='Canceled''",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"search"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "'customer_id=\"DEV-001\" AND ExecutionStatus='Canceled''"
+						},
+						{
+							"key": "query",
+							"value": "\"\"",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "customer_id SA",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8803/lamf-workflow/search?query='customer_id=\"DEV-001\"'",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8803",
+							"path": [
+								"lamf-workflow",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "'customer_id=\"DEV-001\"'"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 18 Sep 2023 15:20:57 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"workflowExecutions\": [\n            {\n                \"workflowId\": \"WF-LAMF-DEV-001\",\n                \"workflowRunId\": \"c0a27040-1610-4025-943d-e05eea7e38d5\"\n            },\n            {\n                \"workflowId\": \"WF-LAMF-DEV-001\",\n                \"workflowRunId\": \"d7817e39-b8e8-4093-ae0f-f820d87d4d75\"\n            },\n            {\n                \"workflowId\": \"WF-LAMF-DEV-001\",\n                \"workflowRunId\": \"77a9c319-7e12-4c2c-b58e-158cf54faa3d\"\n            },\n            {\n                \"workflowId\": \"WF-LAMF-DEV-001\",\n                \"workflowRunId\": \"e281364c-6875-43f7-a879-32d1b76a7308\"\n            }\n        ],\n        \"nextPageToken\": \"\"\n    },\n    \"errorDetails\": \"\"\n}"
+				},
+				{
+					"name": "cancelled",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8803/lamf-workflow/search?query='customer_id=\"DEV-001\" AND ExecutionStatus='Canceled''",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8803",
+							"path": [
+								"lamf-workflow",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "'customer_id=\"DEV-001\" AND ExecutionStatus='Canceled''"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 18 Sep 2023 15:23:01 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"workflowExecutions\": [\n            {\n                \"workflowId\": \"WF-LAMF-DEV-001\",\n                \"workflowRunId\": \"d7817e39-b8e8-4093-ae0f-f820d87d4d75\"\n            }\n        ],\n        \"nextPageToken\": \"\"\n    },\n    \"errorDetails\": \"\"\n}"
+				}
+			]
+		},
+		{
+			"name": "result",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/complex/result?customerId=DEV-001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"complex",
+						"result"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "DEV-001"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "complex workflow result post complextion",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8803/lamf-workflow/result?customerId=DEV-001",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8803",
+							"path": [
+								"lamf-workflow",
+								"result"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "DEV-001"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 18 Sep 2023 14:52:32 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": [\n        {\n            \"completedStateId\": \"ReviewAndConfirmStep\",\n            \"completedStateExecutionId\": \"ReviewAndConfirmStep-1\",\n            \"completedStateOutput\": {\n                \"encoding\": \"BuiltinJacksonJson\",\n                \"data\": \"\\\"Done\\\"\"\n            }\n        }\n    ],\n    \"errorDetails\": \"\"\n}"
+				}
+			]
+		},
+		{
+			"name": "describe",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/status?customerId=DEV-001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"status"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "DEV-001"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "complex workflow result post complextion",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8803/lamf-workflow/result?customerId=DEV-001",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8803",
+							"path": [
+								"lamf-workflow",
+								"result"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "DEV-001"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 18 Sep 2023 14:52:32 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": [\n        {\n            \"completedStateId\": \"ReviewAndConfirmStep\",\n            \"completedStateExecutionId\": \"ReviewAndConfirmStep-1\",\n            \"completedStateOutput\": {\n                \"encoding\": \"BuiltinJacksonJson\",\n                \"data\": \"\\\"Done\\\"\"\n            }\n        }\n    ],\n    \"errorDetails\": \"\"\n}"
+				}
+			]
+		},
+		{
+			"name": "All search attributes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/search-attributes?customerId=DEV-001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"search-attributes"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "DEV-001"
+						},
+						{
+							"key": "runId",
+							"value": "c0a27040-1610-4025-943d-e05eea7e38d5",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "complex workflow result post complextion",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8803/lamf-workflow/result?customerId=DEV-001",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8803",
+							"path": [
+								"lamf-workflow",
+								"result"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "DEV-001"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 18 Sep 2023 14:52:32 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": [\n        {\n            \"completedStateId\": \"ReviewAndConfirmStep\",\n            \"completedStateExecutionId\": \"ReviewAndConfirmStep-1\",\n            \"completedStateOutput\": {\n                \"encoding\": \"BuiltinJacksonJson\",\n                \"data\": \"\\\"Done\\\"\"\n            }\n        }\n    ],\n    \"errorDetails\": \"\"\n}"
+				}
+			]
+		},
+		{
+			"name": "workflows query",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/117.0",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "*/*",
+						"disabled": true
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-US,en;q=0.5",
+						"disabled": true
+					},
+					{
+						"key": "Accept-Encoding",
+						"value": "gzip, deflate, br",
+						"disabled": true
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:8233/namespaces/default/workflows?query=",
+						"disabled": true
+					},
+					{
+						"key": "X-CSRF-TOKEN",
+						"value": "Cch2QPu89TQ2O7iujJbzQlLzMMoRTMnD",
+						"disabled": true
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive",
+						"disabled": true
+					},
+					{
+						"key": "Cookie",
+						"value": "_csrf=Cch2QPu89TQ2O7iujJbzQlLzMMoRTMnD",
+						"disabled": true
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty",
+						"disabled": true
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors",
+						"disabled": true
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8233/api/v1/namespaces/default/workflows?query=RunId=\"a263bb2f-eb6a-4573-a299-de13fe28ef77\"",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8233",
+					"path": [
+						"api",
+						"v1",
+						"namespaces",
+						"default",
+						"workflows"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "query",
+							"value": "RunId=\"a263bb2f-eb6a-4573-a299-de13fe28ef77\""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "data attributes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/117.0",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "*/*",
+						"disabled": true
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-US,en;q=0.5",
+						"disabled": true
+					},
+					{
+						"key": "Accept-Encoding",
+						"value": "gzip, deflate, br",
+						"disabled": true
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:8233/namespaces/default/workflows?query=",
+						"disabled": true
+					},
+					{
+						"key": "X-CSRF-TOKEN",
+						"value": "Cch2QPu89TQ2O7iujJbzQlLzMMoRTMnD",
+						"disabled": true
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive",
+						"disabled": true
+					},
+					{
+						"key": "Cookie",
+						"value": "_csrf=Cch2QPu89TQ2O7iujJbzQlLzMMoRTMnD",
+						"disabled": true
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty",
+						"disabled": true
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors",
+						"disabled": true
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8803/lamf-workflow/data-attributes?workflowId=WF-LAMF-DEV-003",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8803",
+					"path": [
+						"lamf-workflow",
+						"data-attributes"
+					],
+					"query": [
+						{
+							"key": "workflowId",
+							"value": "WF-LAMF-DEV-003"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
