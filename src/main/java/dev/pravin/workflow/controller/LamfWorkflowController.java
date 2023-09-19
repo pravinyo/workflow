@@ -1,5 +1,6 @@
 package dev.pravin.workflow.controller;
 
+import dev.pravin.workflow.kyc.AadhaarKycWorkflow;
 import dev.pravin.workflow.lamf.Constants;
 import dev.pravin.workflow.lamf.LamfOrchestrationWorkflow;
 import dev.pravin.workflow.lamf.request.GetStartedRequest;
@@ -9,6 +10,7 @@ import dev.pravin.workflow.lamf.response.Response;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ImmutableWorkflowOptions;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
+import io.iworkflow.gen.models.WorkflowStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -109,5 +111,46 @@ public class LamfWorkflowController {
                 LamfOrchestrationWorkflow.class,
                 workflowId);
         return ResponseEntity.ok(new Response( response, ""));
+    }
+
+    @PostMapping("/kyc/aadhaar")
+    ResponseEntity<Response> startAadhaarKyc(
+            @RequestParam String aadhaarId,
+            @RequestParam String customerId) {
+        var workflowId = getWorkflowIdForAadhaar(customerId);
+        try {
+            var response = client.describeWorkflow(workflowId);
+
+            if (response.getWorkflowStatus().equals(WorkflowStatus.RUNNING)) {
+                return ResponseEntity.internalServerError().body(new Response("Workflow already running", ""));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        var options = ImmutableWorkflowOptions.builder()
+                .initialSearchAttribute(Map.of(Constants.SA_CUSTOMER_ID, customerId))
+                .build();
+        client.startWorkflow(AadhaarKycWorkflow.class, workflowId, 3600, aadhaarId, options);
+        return ResponseEntity.ok(new Response("success", ""));
+    }
+
+    @PostMapping("/kyc/aadhaar/otp")
+    ResponseEntity<Response> validateAadhaarOtp(
+            @RequestParam String otp,
+            @RequestParam String customerId) {
+        var workflowId = getWorkflowIdForAadhaar(customerId);
+        var response = client.describeWorkflow(workflowId);
+
+        if (response.getWorkflowStatus().equals(WorkflowStatus.RUNNING)) {
+            client.signalWorkflow(AadhaarKycWorkflow.class,
+                    workflowId, "AadhaarOtpSignal", otp);
+            return ResponseEntity.ok(new Response("success", ""));
+        }
+        return ResponseEntity.internalServerError().body(new Response("Workflow not running", ""));
+    }
+
+    private String getWorkflowIdForAadhaar(String customerId) {
+        return "WF-LAMF-KYC-"+customerId;
     }
 }
