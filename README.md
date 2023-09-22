@@ -1,38 +1,39 @@
-# Using iWF DSL framework to write workflow definition and task on top of Candence/Temporal
+# Using iWF DSL framework to write workflow on the top of Cadence/Temporal platform
 
-## Part 1: Cadencen/Temporal Design
+## Part 1: Cadence/Temporal Design
 ![Cadence System: Deployment Topology](doc/cadence-service.png)
-```
-Frontend gateway: for rate limiting, routing, authorizing.
-History subsystem: maintains data (mutable state, queues, and timers).
-Matching subsystem: hosts Task Queues for dispatching.
-Worker Service: for internal background Workflows.
-```
-[To learn more...](https://docs.temporal.io/clusters)
+
+### What are the components of the Cadence/Temporal server?
+Server consists of four independently scalable services:
+- **Frontend gateway:** for rate limiting, routing, authorizing.
+- **History service:** maintains data (workflow mutable state,  
+  event and history storage, task queues ,and timers).
+- **Matching service:** hosts Task Queues for dispatching.
+- **Worker Service:** for internal background Workflows 
+  (replication queue, system Workflows).
+- [To learn more...](https://docs.temporal.io/clusters)
 
 ## [Basic Concepts](https://github.com/indeedeng/iwf/wiki/Basic-concepts-overview)
 
 ### Runtime platform
-Provide the ecosystem to run your applications and takes care of durability, availability, and scalability of the application.
-Both Cadence and Temporal share same behaviour as Temporal is forked from Cadence. Worker Processes are hosted by you and execute your code. The communication within Cluster uses gRPC.
+Provide the ecosystem to run your applications and takes care of `durability, availability, and scalability` of the application.
+Both Cadence and Temporal share same behaviour as Temporal is forked from Cadence. **Worker Processes are hosted by you and execute your code.** The communication within Cluster uses `gRPC`.
 Cadence/Temporal service is responsible for keeping workflow state and associated durable timers. It maintains internal queues (called task lists) which are used to dispatch tasks to external workers. Workflow execution is resumable, recoverable, and reactive.
-- [Cadence](https://cadenceworkflow.io/docs/get-started/)
-- [Temporal](https://docs.temporal.io/temporal)
-- [iWF](https://github.com/indeedeng/iwf)
-
-
-Temporal System Overview for workflow execution
+- [Cadence Doc](https://cadenceworkflow.io/docs/get-started/)
+- [Temporal Doc](https://docs.temporal.io/temporal)
+- [iWF Project](https://github.com/indeedeng/iwf)
 
 ![Temporal service](doc/temporal-service.png)
+_Temporal System Overview for workflow execution_
 
 ### Workflows
 The term Workflow frequently denotes either a Workflow Type, a Workflow Definition, or a Workflow Execution.
-- Workflow Definition: A Workflow Definition is the code that defines the constraints of a Workflow Execution. A Workflow Definition is often also referred to as a Workflow Function.
-- Deterministic constraints: A critical aspect of developing Workflow Definitions is ensuring they exhibit certain deterministic traits – that is, making sure that the same Commands are emitted in the same sequence, whenever a corresponding Workflow Function Execution (instance of the Function Definition) is re-executed.
-- Handling unreliable Worker Processes: Workflow Function Executions are completely oblivious to the Worker Process in terms of failures or downtime.
-- Event Loop:  
+- **Workflow Definition:** A Workflow Definition is the code that defines the constraints of a Workflow Execution. A Workflow Definition is often also referred to as a Workflow Function.
+- **Deterministic constraints:** A critical aspect of developing Workflow Definitions is ensuring they exhibit certain deterministic traits – that is, making sure that the same Commands are emitted in the same sequence, whenever a corresponding Workflow Function Execution (instance of the Function Definition) is re-executed.
+- **Handling unreliable Worker Processes:** Workflow Function Executions are completely oblivious to the Worker Process in terms of failures or downtime.
+- _Event Loop:_  
   ![img_1.png](doc/workflow-execution.png)
-- Workflow execution states:
+- _Workflow execution states:_
   ![img.png](doc/workflow-execution-state.png)
 
 
@@ -43,11 +44,14 @@ The term Workflow frequently denotes either a Workflow Type, a Workflow Definiti
 
 
 ### Event handling
-workflows can be signalled about an external event. A signal is always point to point destined to a specific workflow instance. Signals are always processed in the order in which they are received.
+Workflows can be signalled about an external event. A signal is always point to point destined to a specific workflow instance. Signals are always processed in the order in which they are received.
 - Human Tasks
 - Process Execution Alteration
 - Synchronization  
-  Example: there is a requirement that all messages for a single user are processed sequentially but the underlying messaging infrastructure can deliver them in parallel. The Cadence solution would be to have a workflow per user and signal it when an event is received. Then the workflow would buffer all signals in an internal data structure and then call an activity for every signal received.
+  Example: there is a requirement that all messages for a single user are processed sequentially  
+  but the underlying messaging infrastructure can deliver them in parallel. The Cadence solution  
+  would be to have a workflow per user and signal it when an event is received. Then the workflow  
+  would buffer all signals in an internal data structure and then call an activity for every signal received.
 
 ### Visibility
 - View,  Filter and Search for Workflow Executions
@@ -57,11 +61,12 @@ workflows can be signalled about an external event. A signal is always point to 
 
 ## Part 2: iWF Design
 ### High Level Design
-An iWF application is composed of several iWF workflow workers. These workers host REST APIs as "worker APIs" for server to call. This callback pattern similar to AWS Step Functions invoking Lambdas, if you are familiar with.
+An iWF application is composed of several iWF workflow workers. These workers _host REST APIs as "worker APIs" for server to call_. This callback pattern similar to AWS Step Functions invoking Lambdas, if you are familiar with.
 
 An application also perform actions on workflow executions, such as starting, stopping, signaling, and retrieving results by calling iWF service APIs as "service APIs".
 
 The service APIs are provided by the "API service" in iWF server. Internally, this API service communicates with the Cadence/Temporal service as its backend.
+
 ![HLD for iWF](doc/iwf-architecture.png)
 
 ### Low Level Design
@@ -72,11 +77,11 @@ The user workflow code defines a list of WorkflowState and kicks off a workflow 
 At any workflow state, the interpreter will call back the user workflow code to invoke some APIs (waitUntil or execute). Calling the waitUntil API will return some command requests. When the command requests are finished, the interpreter will then call user workflow code to invoke the “execute” API to return a decision. The decision will decide how to complete or transitioning to other workflow states.
 
 At any API, workflow code can mutate the data/search attributes or publish to internal channels.
+
 ![LLD for iWF](doc/iwf-workflow-execution.png)
 
 ### RPC: Interact with workflow via API 
 API for application to interact with the workflow. It can access to persistence, internal channel, and state execution
-- [RPC](https://github.com/indeedeng/iwf/wiki/RPC#signal-channel-vs-rpc)
 - [RPC vs Signal](https://github.com/indeedeng/iwf/wiki/RPC#signal-channel-vs-rpc)
   - RPC + Internal Channel = Signal Channel
   - Inter Channel and Signal Channel are both message queues
@@ -141,16 +146,29 @@ public class UserSignupWorkflow implements ObjectWorkflow {
 ```
 
 ## Example
-- https://github.com/indeedeng/iwf/wiki/Use-case-study-%E2%80%90%E2%80%90-Microservice-Orchestration
+- [Microservice Orchestration](https://github.com/indeedeng/iwf/wiki/Use-case-study-%E2%80%90%E2%80%90-Microservice-Orchestration)
+- [user signup workflow](https://github.com/indeedeng/iwf/wiki/Use-case-study-%E2%80%90%E2%80%90-user-signup-workflow)
 
-## Link:
+## Setup
+To run services on local machine.
+
+### Link:
 - [Dashboard](http://localhost:8233/namespaces/default/workflows)
-- [IWF project](https://github.com/indeedeng/iwf)
-- [Temporal](https://github.com/temporalio/temporal)
-- [Cadence](https://github.com/uber/cadence)
-- [Setup](https://github.com/indeedeng/iwf/blob/main/CONTRIBUTING.md#prepare-cadencetemporal-environment)
+- [iWF Project](https://github.com/indeedeng/iwf)
+- [Instructions](https://github.com/indeedeng/iwf/blob/main/CONTRIBUTING.md#prepare-cadencetemporal-environment)
 
-## temporal cli commands for registering attributes
+### Step 1: Clone Project and Run locally
+- Clone the iWF project. https://github.com/indeedeng/iwf
+- open cli in project folder and run: `cd docker-compose && docker-compose up`
+```
+This by default will run Temporal server with it:
+    IWF service: http://localhost:8801/
+    Temporal WebUI: http://localhost:8233/
+    Temporal service: localhost:7233
+```
+
+### Step 2: Registering attributes
+Open CLI and execute below command if you are using temporal server. Refer instructions in links for Candence server.
 ```
 temporal operator search-attribute create -name current_step -type Text
 temporal operator search-attribute create -name aadhaarId -type Text
@@ -162,9 +180,19 @@ temporal operator search-attribute create -name IwfWorkflowType -type Keyword
 temporal operator search-attribute create -name IwfGlobalWorkflowVersion -type Int
 temporal operator search-attribute create -name IwfExecutingStateIds -type Keyword
 ```
-
-## List
+Handy CLI commands
 ```
 temporal operator search-attribute list
 temporal workflow list
 ```
+
+### Step 3: Run the code in this repository.
+```
+gradle bootRun
+```
+
+### Step 4: Use the collection in postman folder to interact with Workflows
+- [LAMF Workflow](postman/IWF-LAMF.postman_collection.json)
+- [Order workflow](postman/IWF-order.postman_collection.json)
+- [KYC Workflow](postman/KYC.postman_collection.json)
+
