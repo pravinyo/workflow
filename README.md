@@ -80,9 +80,10 @@ At any API, workflow code can mutate the data/search attributes or publish to in
 
 ![LLD for iWF](doc/iwf-workflow-execution.png)
 
-### RPC: Interact with workflow via API 
+### RPC: Interact with workflow via API
 API for application to interact with the workflow. It can access to persistence, internal channel, and state execution
-- [RPC vs Signal](https://github.com/indeedeng/iwf/wiki/RPC#signal-channel-vs-rpc)
+![communication](doc/communication.png)
+[RPC vs Signal](https://github.com/indeedeng/iwf/wiki/RPC#signal-channel-vs-rpc)
   - RPC + Internal Channel = Signal Channel
   - Inter Channel and Signal Channel are both message queues
   - RPC is synchronous API call [Definition](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/iworkflow/core/RpcDefinitions.java)
