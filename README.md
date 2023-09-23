@@ -13,7 +13,7 @@ Server consists of four independently scalable services:
   (replication queue, system Workflows).
 - [To learn more...](https://docs.temporal.io/clusters)
 
-## [Basic Concepts](https://github.com/indeedeng/iwf/wiki/Basic-concepts-overview)
+## Part 2: [Basic Concepts](https://github.com/indeedeng/iwf/wiki/Basic-concepts-overview)
 
 ### Runtime platform
 Provide the ecosystem to run your applications and takes care of `durability, availability, and scalability` of the application.
@@ -59,7 +59,7 @@ Workflows can be signalled about an external event. A signal is always point to 
   - https://docs.temporal.io/visibility#search-attribute
 - Query Workflow state
 
-## Part 2: iWF Design
+## Part 3: iWF Design
 ### High Level Design
 An iWF application is composed of several iWF workflow workers. These workers _host REST APIs as "worker APIs" for server to call_. This callback pattern similar to AWS Step Functions invoking Lambdas, if you are familiar with.
 
@@ -146,14 +146,14 @@ public class UserSignupWorkflow implements ObjectWorkflow {
 }
 ```
 
-## Example
+## Part 4: Example
 - [Microservice Orchestration](https://github.com/indeedeng/iwf/wiki/Use-case-study-%E2%80%90%E2%80%90-Microservice-Orchestration)
 - [user signup workflow](https://github.com/indeedeng/iwf/wiki/Use-case-study-%E2%80%90%E2%80%90-user-signup-workflow)
 
-## Setup
+## Part 5: Setup
 To run services on local machine.
 
-### Link:
+### Useful Links
 - [Dashboard](http://localhost:8233/namespaces/default/workflows)
 - [iWF Project](https://github.com/indeedeng/iwf)
 - [Instructions](https://github.com/indeedeng/iwf/blob/main/CONTRIBUTING.md#prepare-cadencetemporal-environment)
