@@ -194,7 +194,9 @@ gradle bootRun
 ```
 
 ### Step 4: Use the collection in postman folder to interact with Workflows
-- [LAMF Workflow](postman/IWF-LAMF.postman_collection.json)
-- [Order workflow](postman/IWF-order.postman_collection.json)
 - [KYC Workflow](postman/KYC.postman_collection.json)
-
+  - [diagram](src/main/java/dev/pravin/workflow/kyc/README.md)
+- [LAMF Workflow](postman/IWF-LAMF.postman_collection.json)
+  - [diagram](src/main/java/dev/pravin/workflow/lamf/README.md)
+- [Order workflow](postman/IWF-order.postman_collection.json)
+  - [diagram](doc/order-workflow.png)
