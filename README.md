@@ -161,6 +161,7 @@ To run services on local machine.
 ### Step 1: Clone Project and Run locally
 - Clone the iWF project. https://github.com/indeedeng/iwf
 - open cli in project folder and run: `cd docker-compose && docker-compose up`
+- [Doc for temporal-admin-tools and auto-setup used in iWF Project](https://temporal.io/blog/auto-setup)
 ```
 This by default will run Temporal server with it:
     IWF service: http://localhost:8801/
