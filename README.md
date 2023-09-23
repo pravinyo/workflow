@@ -13,7 +13,7 @@ Server consists of four independently scalable services:
   (replication queue, system Workflows).
 - [To learn more...](https://docs.temporal.io/clusters)
 
-## Part 2: [Basic Concepts](https://github.com/indeedeng/iwf/wiki/Basic-concepts-overview)
+## Part 2: Basic Concepts
 
 ### Runtime platform
 Provide the ecosystem to run your applications and takes care of `durability, availability, and scalability` of the application.
@@ -21,7 +21,7 @@ Both Cadence and Temporal share same behaviour as Temporal is forked from Cadenc
 Cadence/Temporal service is responsible for keeping workflow state and associated durable timers. It maintains internal queues (called task lists) which are used to dispatch tasks to external workers. Workflow execution is resumable, recoverable, and reactive.
 - [Cadence Doc](https://cadenceworkflow.io/docs/get-started/)
 - [Temporal Doc](https://docs.temporal.io/temporal)
-- [iWF Project](https://github.com/indeedeng/iwf)
+- [iWF Project](https://github.com/indeedeng/iwf/wiki/Basic-concepts-overview)
 
 ![Temporal service](doc/temporal-service.png)
 _Temporal System Overview for workflow execution_
