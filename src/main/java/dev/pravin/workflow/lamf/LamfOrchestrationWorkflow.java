@@ -6,12 +6,13 @@ import dev.pravin.workflow.lamf.model.SelectedMutualFund;
 import dev.pravin.workflow.lamf.request.InitiateKycRequest;
 import dev.pravin.workflow.lamf.request.ValidateOtpRequest;
 import dev.pravin.workflow.lamf.steps.*;
-import io.iworkflow.core.Client;
-import io.iworkflow.core.ObjectWorkflow;
-import io.iworkflow.core.StateDef;
+import io.iworkflow.core.*;
+import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.communication.CommunicationMethodDef;
+import io.iworkflow.core.communication.InternalChannelDef;
 import io.iworkflow.core.communication.SignalChannelDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
+import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.core.persistence.SearchAttributeDef;
 import io.iworkflow.gen.models.SearchAttributeValueType;
@@ -56,11 +57,22 @@ public class LamfOrchestrationWorkflow implements ObjectWorkflow {
     @Override
     public List<CommunicationMethodDef> getCommunicationSchema() {
         return List.of(
-                SignalChannelDef.create(GetStartedRequest.class, Constants.SC_USER_INPUT_CONSENT),
+                InternalChannelDef.create(GetStartedRequest.class, Constants.IC_USER_INPUT_CONSENT),
+
                 SignalChannelDef.create(ValidateOtpRequest.class, Constants.SC_USER_INPUT_MF_PULL_OTP),
                 SignalChannelDef.create(SelectedMutualFund.class, Constants.SC_USER_INPUT_MF_SCHEME_LIST),
                 SignalChannelDef.create(InitiateKycRequest.class, Constants.SC_USER_INPUT_KYC),
                 SignalChannelDef.create(String.class, Constants.SC_SYSTEM_KYC_COMPLETED)
         );
+    }
+
+    @RPC
+    public String getCurrentStep(Context context, Persistence persistence, Communication communication) {
+        return persistence.getDataAttribute(Constants.DA_CURRENT_STEP, String.class);
+    }
+
+    @RPC
+    public void updateConsent(Context context, GetStartedRequest consent, Persistence persistence, Communication communication) {
+        communication.publishInternalChannel(Constants.IC_USER_INPUT_CONSENT, consent);
     }
 }

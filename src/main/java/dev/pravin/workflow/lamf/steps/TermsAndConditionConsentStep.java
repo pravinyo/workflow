@@ -9,7 +9,7 @@ import io.iworkflow.core.WorkflowState;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
-import io.iworkflow.core.communication.SignalCommand;
+import io.iworkflow.core.communication.InternalChannelCommand;
 import io.iworkflow.core.persistence.Persistence;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,13 +26,13 @@ public class TermsAndConditionConsentStep implements WorkflowState<Void> {
     public CommandRequest waitUntil(Context context, Void input, Persistence persistence, Communication communication) {
         persistence.setDataAttribute(Constants.DA_CURRENT_STEP, this.getClass().getSimpleName());
         return CommandRequest.forAnyCommandCompleted(
-                SignalCommand.create(Constants.SC_USER_INPUT_CONSENT)
+                InternalChannelCommand.create(Constants.IC_USER_INPUT_CONSENT)
         );
     }
 
     @Override
     public StateDecision execute(Context context, Void input, CommandResults commandResults, Persistence persistence, Communication communication) {
-        var requestObject = commandResults.getSignalValueByIndex(0);
+        var requestObject = commandResults.getAllInternalChannelCommandResult().get(0).getValue().get();
         var getStartedRequest = (GetStartedRequest) requestObject;
 
         if (!getStartedRequest.isConsentProvided()) {

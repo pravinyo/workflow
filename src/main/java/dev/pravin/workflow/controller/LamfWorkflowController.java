@@ -31,12 +31,24 @@ public class LamfWorkflowController {
     @PostMapping("/start")
     ResponseEntity<Response> start(@RequestParam String customerId) {
         var workflowId = getWorkflowId(customerId);
+        if (isWorkflowInProgress(workflowId)) {
+            return getCurrentStep(workflowId);
+        }
+
         var options = ImmutableWorkflowOptions.builder()
                 .initialSearchAttribute(Map.of(Constants.SA_CUSTOMER_ID, customerId))
                 .build();
 
         client.startWorkflow(LamfOrchestrationWorkflow.class, workflowId, 3600, null, options);
-        return ResponseEntity.ok(new Response( "success", ""));
+        return ResponseEntity.ok(new Response( "StartStep", "success", ""));
+    }
+
+    @GetMapping("/current-step")
+    private ResponseEntity<Response> getCurrentStep(String customerId) {
+        var workflowId = getWorkflowId(customerId);
+        var rpcStub = client.newRpcStub(LamfOrchestrationWorkflow.class, workflowId);
+        var currentStep = client.invokeRPC(rpcStub::getCurrentStep);
+        return ResponseEntity.ok(new Response(currentStep, "Workflow already running", ""));
     }
 
     private String getWorkflowId(String customerId) {
@@ -46,8 +58,8 @@ public class LamfWorkflowController {
     @PostMapping("/consent")
     ResponseEntity<Response> saveConsent(@RequestBody GetStartedRequest getStartedRequest) {
         var workflowId = getWorkflowId(getStartedRequest.customerId());
-        client.signalWorkflow(LamfOrchestrationWorkflow.class, workflowId,
-                Constants.SC_USER_INPUT_CONSENT,getStartedRequest);
+        var rpcStub = client.newRpcStub(LamfOrchestrationWorkflow.class, workflowId);
+        client.invokeRPC(rpcStub::updateConsent, getStartedRequest);
         return ResponseEntity.ok(new Response( "success", ""));
     }
 
@@ -72,7 +84,7 @@ public class LamfWorkflowController {
         query = escapeQuote(query);
         System.out.println("got query for search: " + query);
         WorkflowSearchResponse response = client.searchWorkflow(query, 1000);
-        return ResponseEntity.ok(new Response( response, ""));
+        return ResponseEntity.ok(new Response(response, ""));
     }
 
     String escapeQuote(String input) {
@@ -127,9 +139,7 @@ public class LamfWorkflowController {
             @RequestParam String customerId) {
         var workflowId = getWorkflowIdForAadhaar(customerId);
         try {
-            var response = client.describeWorkflow(workflowId);
-
-            if (response.getWorkflowStatus().equals(WorkflowStatus.RUNNING)) {
+            if (isWorkflowInProgress(workflowId)) {
                 return ResponseEntity.internalServerError().body(new Response("Workflow already running", ""));
             }
         } catch (Exception e) {
@@ -141,6 +151,16 @@ public class LamfWorkflowController {
                 .build();
         client.startWorkflow(AadhaarKycWorkflow.class, workflowId, 3600, aadhaarId, options);
         return ResponseEntity.ok(new Response("success", ""));
+    }
+
+    private Boolean isWorkflowInProgress(String workflowId) {
+        try {
+            var response = client.describeWorkflow(workflowId);
+            return response.getWorkflowStatus().equals(WorkflowStatus.RUNNING);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 
     @PostMapping("/kyc/aadhaar/otp")

@@ -7,7 +7,7 @@ public class Constants {
     public static final String DA_CURRENT_STEP = "da_current_step";
 
     // signal channel
-    public static final String SC_USER_INPUT_CONSENT = "sc_user_input_consent";
+    public static final String IC_USER_INPUT_CONSENT = "ic_user_input_consent";
     public static final String SC_USER_INPUT_MF_PULL_OTP = "sc_user_input_mf_pull_otp";
     public static final String SC_USER_INPUT_MF_SCHEME_LIST = "sc_user_input_mf_scheme_list";
     public static final String SC_USER_INPUT_KYC = "sc_user_input_kyc";
