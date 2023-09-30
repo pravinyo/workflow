@@ -29,7 +29,7 @@ class ValidateAadhaarOtpStepTest {
 
     @Test
     void should_return_next_step_as_ValidateAadhaarOtpStep_when_otp_sent_successfully() {
-        var validateAadhaarOtpStep = new ValidateAadhaarOtpStep();
+        var validateAadhaarOtpStep = new ValidateAadhaarOtpStep(Mockito.mock());
 
         var actualCommandsToWait = validateAadhaarOtpStep.waitUntil(
                 context,
@@ -45,7 +45,7 @@ class ValidateAadhaarOtpStepTest {
 
     @Test
     void should_return_State_decision_as_SaveAadhaarDetailsStep_for_valid_otp() {
-        var validateAadhaarOtpStep = new ValidateAadhaarOtpStep();
+        var validateAadhaarOtpStep = new ValidateAadhaarOtpStep(Mockito.mock());
         Mockito.when(commandResults.getSignalValueByIndex(Mockito.anyInt()))
                 .thenReturn("1234");
 
@@ -62,7 +62,7 @@ class ValidateAadhaarOtpStepTest {
 
     @Test
     void should_return_State_decision_as_ValidateAadhaarOtpStep_for_invalid_otp() {
-        var validateAadhaarOtpStep = new ValidateAadhaarOtpStep();
+        var validateAadhaarOtpStep = new ValidateAadhaarOtpStep(Mockito.mock());
         Mockito.when(commandResults.getSignalValueByIndex(Mockito.anyInt()))
                 .thenReturn("1233");
 

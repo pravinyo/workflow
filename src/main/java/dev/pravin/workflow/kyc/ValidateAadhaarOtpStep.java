@@ -1,6 +1,8 @@
 package dev.pravin.workflow.kyc;
 
 import dev.pravin.workflow.lamf.Constants;
+import dev.pravin.workflow.lamf.LamfOrchestrationWorkflow;
+import io.iworkflow.core.Client;
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.WorkflowState;
@@ -15,6 +17,12 @@ import java.util.Objects;
 
 @Slf4j
 public class ValidateAadhaarOtpStep implements WorkflowState<String> {
+    private final Client client;
+
+    public ValidateAadhaarOtpStep(Client client) {
+        this.client = client;
+    }
+
     @Override
     public Class<String> getInputType() {
         return String.class;
@@ -30,10 +38,24 @@ public class ValidateAadhaarOtpStep implements WorkflowState<String> {
     @Override
     public StateDecision execute(Context context, String aadhaarReferenceId, CommandResults commandResults, Persistence persistence, Communication communication) {
         var otp = (String) commandResults.getSignalValueByIndex(0);
+        var otpAttempt = persistence.getDataAttribute(Constants.OTP_ATTEMPT, Integer.class);
+        if (Objects.isNull(otpAttempt)){
+            otpAttempt = 0;
+        }
+        otpAttempt = 1 + otpAttempt;
+        persistence.setDataAttribute(Constants.OTP_ATTEMPT, otpAttempt);
         if (validateOtp(aadhaarReferenceId, otp)) {
             var details = fetchAadhaarDetails(aadhaarReferenceId, otp);
             return StateDecision.singleNextState(SaveAadhaarDetailsStep.class, details);
 
+        }
+
+        if (otpAttempt == 3) {
+            var parentWorkflowId = persistence.getSearchAttributeText(Constants.SA_PARENT_WORKFLOW_ID);
+            var rpcStub = client.newRpcStub(LamfOrchestrationWorkflow.class, parentWorkflowId);
+            client.invokeRPC(rpcStub::kycCompletionStatus, Constants.KYC_FAILED);
+            persistence.setDataAttribute(Constants.KYC_STATUS, Constants.KYC_FAILED);
+            return StateDecision.forceCompleteWorkflow("Failed");
         }
 
         return StateDecision.singleNextState(ValidateAadhaarOtpStep.class, aadhaarReferenceId);

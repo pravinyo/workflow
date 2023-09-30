@@ -20,4 +20,7 @@ public class Constants {
 
     // KYC STATE
     public static final String KYC_SUCCESS = "SUCCESS";
+    public static final String KYC_FAILED = "FAILED";
+    public static final String OTP_ATTEMPT = "otp_attempt";
+    public static final String KYC_STATUS = "kyc_status";
 }

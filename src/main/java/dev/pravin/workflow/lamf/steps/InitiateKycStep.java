@@ -43,19 +43,36 @@ public class InitiateKycStep implements WorkflowState<Void> {
         try {
             var response = client.describeWorkflow(workflowId);
             if (response.getWorkflowStatus().equals(WorkflowStatus.RUNNING)) {
-                resetWorkflow(context);
-                initiateKycWorkflow(initiateKycRequest, workflowId, context.getWorkflowId());
-                return StateDecision.singleNextState(AwaitingKycCompletionStep.class);
+                return resetAndGetNextStep(context, initiateKycRequest, workflowId);
 
             } else if (response.getWorkflowStatus().equals(WorkflowStatus.COMPLETED)) {
-                log.info("Kyc already done");
-                persistence.setDataAttribute(Constants.DA_CURRENT_STEP, "Done");
-                return StateDecision.forceCompleteWorkflow("Done");
+                var kycStatus = getKycStatus(workflowId);
+                if (kycStatus.equals(Constants.KYC_SUCCESS)) {
+                    log.info("Kyc already done");
+                    persistence.setDataAttribute(Constants.DA_CURRENT_STEP, "Done");
+                    return StateDecision.forceCompleteWorkflow("Done");
+                } else {
+                    log.info("KYC is not done... resetting and restarting");
+                    return resetAndGetNextStep(context, initiateKycRequest, workflowId);
+                }
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
+        initiateKycWorkflow(initiateKycRequest, workflowId, context.getWorkflowId());
+        return StateDecision.singleNextState(AwaitingKycCompletionStep.class);
+    }
+
+    private Object getKycStatus(String workflowId) {
+        var kycWorkflowDa = client.getAllDataAttributes(
+                AadhaarKycWorkflow.class,
+                workflowId);
+        return kycWorkflowDa.get(Constants.KYC_STATUS);
+    }
+
+    private StateDecision resetAndGetNextStep(Context context, InitiateKycRequest initiateKycRequest, String workflowId) {
+        resetWorkflow(context);
         initiateKycWorkflow(initiateKycRequest, workflowId, context.getWorkflowId());
         return StateDecision.singleNextState(AwaitingKycCompletionStep.class);
     }
