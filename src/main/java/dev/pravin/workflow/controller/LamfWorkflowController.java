@@ -168,11 +168,9 @@ public class LamfWorkflowController {
             @RequestParam String otp,
             @RequestParam String customerId) {
         var workflowId = getWorkflowIdForAadhaar(customerId);
-        var response = client.describeWorkflow(workflowId);
-
-        if (response.getWorkflowStatus().equals(WorkflowStatus.RUNNING)) {
+        if (isWorkflowInProgress(workflowId)) {
             client.signalWorkflow(AadhaarKycWorkflow.class,
-                    workflowId, "AadhaarOtpSignal", otp);
+                    workflowId, Constants.SC_AADHAAR_OTP_SIGNAL, otp);
             return ResponseEntity.ok(new Response("success", ""));
         }
         return ResponseEntity.internalServerError().body(new Response("Workflow not running", ""));

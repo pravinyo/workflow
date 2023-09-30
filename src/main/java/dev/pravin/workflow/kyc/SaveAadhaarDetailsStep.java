@@ -28,7 +28,9 @@ public class SaveAadhaarDetailsStep implements WorkflowState<String> {
     public StateDecision execute(Context context, String aadhaarDetails, CommandResults commandResults, Persistence persistence, Communication communication) {
         log.info("save aadhaar details");
         var parentWorkflowId = persistence.getSearchAttributeText(Constants.SA_PARENT_WORKFLOW_ID);
-        client.signalWorkflow(LamfOrchestrationWorkflow.class, parentWorkflowId, Constants.SC_SYSTEM_KYC_COMPLETED, "Success");
+        var rpcStub = client.newRpcStub(LamfOrchestrationWorkflow.class, parentWorkflowId);
+        client.invokeRPC(rpcStub::kycCompletionStatus, Constants.KYC_SUCCESS);
+
         return StateDecision.forceCompleteWorkflow("Aadhaar Kyc Finished");
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static dev.pravin.workflow.lamf.Constants.SC_SYSTEM_KYC_COMPLETED;
+import static dev.pravin.workflow.lamf.Constants.SC_AADHAAR_OTP_SIGNAL;
 
 @Component
 public class AadhaarKycWorkflow implements ObjectWorkflow {
@@ -43,8 +43,7 @@ public class AadhaarKycWorkflow implements ObjectWorkflow {
     @Override
     public List<CommunicationMethodDef> getCommunicationSchema() {
         return List.of(
-                SignalChannelDef.create(String.class, "AadhaarOtpSignal"),
-                SignalChannelDef.create(String.class, SC_SYSTEM_KYC_COMPLETED)
+                SignalChannelDef.create(String.class, SC_AADHAAR_OTP_SIGNAL)
         );
     }
 }

@@ -7,7 +7,7 @@ import io.iworkflow.core.WorkflowState;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
-import io.iworkflow.core.communication.SignalCommand;
+import io.iworkflow.core.communication.InternalChannelCommand;
 import io.iworkflow.core.persistence.Persistence;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,15 +23,15 @@ public class AwaitingKycCompletionStep implements WorkflowState<Void> {
     public CommandRequest waitUntil(Context context, Void input, Persistence persistence, Communication communication) {
         persistence.setDataAttribute(Constants.DA_CURRENT_STEP, this.getClass().getSimpleName());
         return CommandRequest.forAllCommandCompleted(
-                SignalCommand.create(Constants.SC_SYSTEM_KYC_COMPLETED)
+                InternalChannelCommand.create(Constants.IC_SYSTEM_KYC_COMPLETED)
         );
     }
 
     @Override
     public StateDecision execute(Context context, Void input, CommandResults commandResults, Persistence persistence, Communication communication) {
-        var kycCompletionStatus = (String) commandResults.getSignalValueByIndex(0);
+        var kycCompletionStatusOptional = commandResults.getAllInternalChannelCommandResult().get(0).getValue();
 
-        if (kycCompletionStatus.equals("Success")) {
+        if (kycCompletionStatusOptional.isPresent() && kycCompletionStatusOptional.get().equals(Constants.KYC_SUCCESS)) {
             log.info("Kyc completed");
             persistence.setDataAttribute(Constants.DA_CURRENT_STEP, "Done");
             return StateDecision.forceCompleteWorkflow("Done");
@@ -39,6 +39,6 @@ public class AwaitingKycCompletionStep implements WorkflowState<Void> {
             persistence.setDataAttribute(Constants.DA_CURRENT_STEP, "Failed");
             log.info("Kyc failed");
         }
-        return StateDecision.singleNextState(AwaitingKycCompletionStep.class);
+        return StateDecision.singleNextState(ReviewAndConfirmStep.class);
     }
 }

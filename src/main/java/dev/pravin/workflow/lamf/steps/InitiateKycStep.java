@@ -9,6 +9,7 @@ import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.communication.SignalCommand;
 import io.iworkflow.core.persistence.Persistence;
+import io.iworkflow.gen.models.WorkflowResetType;
 import io.iworkflow.gen.models.WorkflowStatus;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,6 +43,8 @@ public class InitiateKycStep implements WorkflowState<Void> {
         try {
             var response = client.describeWorkflow(workflowId);
             if (response.getWorkflowStatus().equals(WorkflowStatus.RUNNING)) {
+                resetWorkflow(context);
+                initiateKycWorkflow(initiateKycRequest, workflowId, context.getWorkflowId());
                 return StateDecision.singleNextState(AwaitingKycCompletionStep.class);
 
             } else if (response.getWorkflowStatus().equals(WorkflowStatus.COMPLETED)) {
@@ -57,6 +60,14 @@ public class InitiateKycStep implements WorkflowState<Void> {
         return StateDecision.singleNextState(AwaitingKycCompletionStep.class);
     }
 
+    private void resetWorkflow(Context context) {
+        var resetWorkflowTypeAndOptions = ResetWorkflowTypeAndOptions.builder()
+                .resetType(WorkflowResetType.BEGINNING)
+                .reason("resetting kyc")
+                .skipSignalReapply(true)
+                .build();
+        client.resetWorkflow(context.getWorkflowId(), resetWorkflowTypeAndOptions);
+    }
     private void initiateKycWorkflow(InitiateKycRequest initiateKycRequest, String childWorkflowId, String workflowId) {
         var options = ImmutableWorkflowOptions.builder()
                 .initialSearchAttribute(Map.of(

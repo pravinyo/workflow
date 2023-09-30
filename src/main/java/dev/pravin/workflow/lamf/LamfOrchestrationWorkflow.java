@@ -58,11 +58,11 @@ public class LamfOrchestrationWorkflow implements ObjectWorkflow {
     public List<CommunicationMethodDef> getCommunicationSchema() {
         return List.of(
                 InternalChannelDef.create(GetStartedRequest.class, Constants.IC_USER_INPUT_CONSENT),
+                InternalChannelDef.create(String.class, Constants.IC_SYSTEM_KYC_COMPLETED),
 
                 SignalChannelDef.create(ValidateOtpRequest.class, Constants.SC_USER_INPUT_MF_PULL_OTP),
                 SignalChannelDef.create(SelectedMutualFund.class, Constants.SC_USER_INPUT_MF_SCHEME_LIST),
-                SignalChannelDef.create(InitiateKycRequest.class, Constants.SC_USER_INPUT_KYC),
-                SignalChannelDef.create(String.class, Constants.SC_SYSTEM_KYC_COMPLETED)
+                SignalChannelDef.create(InitiateKycRequest.class, Constants.SC_USER_INPUT_KYC)
         );
     }
 
@@ -74,5 +74,10 @@ public class LamfOrchestrationWorkflow implements ObjectWorkflow {
     @RPC
     public void updateConsent(Context context, GetStartedRequest consent, Persistence persistence, Communication communication) {
         communication.publishInternalChannel(Constants.IC_USER_INPUT_CONSENT, consent);
+    }
+
+    @RPC
+    public void kycCompletionStatus(Context context, String status, Persistence persistence, Communication communication) {
+        communication.publishInternalChannel(Constants.IC_SYSTEM_KYC_COMPLETED, status);
     }
 }

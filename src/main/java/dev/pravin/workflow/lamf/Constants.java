@@ -11,9 +11,13 @@ public class Constants {
     public static final String SC_USER_INPUT_MF_PULL_OTP = "sc_user_input_mf_pull_otp";
     public static final String SC_USER_INPUT_MF_SCHEME_LIST = "sc_user_input_mf_scheme_list";
     public static final String SC_USER_INPUT_KYC = "sc_user_input_kyc";
-    public static final String SC_SYSTEM_KYC_COMPLETED = "sc_system_kyc_completed";
+    public static final String SC_AADHAAR_OTP_SIGNAL = "sc_aadhaar_otp_signal";
+    public static final String IC_SYSTEM_KYC_COMPLETED = "ic_system_kyc_completed";
 
     //search attributes
     public static final String SA_CUSTOMER_ID = "customer_id";
     public static final String SA_PARENT_WORKFLOW_ID = "parentWorkflowId";
+
+    // KYC STATE
+    public static final String KYC_SUCCESS = "SUCCESS";
 }

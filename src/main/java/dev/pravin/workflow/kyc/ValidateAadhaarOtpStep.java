@@ -1,5 +1,6 @@
 package dev.pravin.workflow.kyc;
 
+import dev.pravin.workflow.lamf.Constants;
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.WorkflowState;
@@ -22,7 +23,7 @@ public class ValidateAadhaarOtpStep implements WorkflowState<String> {
     @Override
     public CommandRequest waitUntil(Context context, String input, Persistence persistence, Communication communication) {
         return CommandRequest.forAllCommandCompleted(
-                SignalCommand.create("AadhaarOtpSignal")
+                SignalCommand.create(Constants.SC_AADHAAR_OTP_SIGNAL)
         );
     }
 
