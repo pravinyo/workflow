@@ -38,7 +38,7 @@ class ValidateAadhaarOtpStepTest {
                 communication);
 
         var expectedStateDecision = CommandRequest.forAllCommandCompleted(
-                SignalCommand.create("AadhaarOtpSignal")
+                SignalCommand.create("sc_aadhaar_otp_signal")
         );
         assertEquals(expectedStateDecision, actualCommandsToWait);
     }
